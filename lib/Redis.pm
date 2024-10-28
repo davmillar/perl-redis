@@ -28,6 +28,7 @@ use constant EWOULDBLOCK => eval {Errno::EWOULDBLOCK} || -1E9;
 use constant EAGAIN      => eval {Errno::EAGAIN} || -1E9;
 use constant EINTR       => eval {Errno::EINTR} || -1E9;
 use constant ECONNRESET  => eval {Errno::ECONNRESET} || -1E9;
+use constant EPIPE       => eval {Errno::EPIPE} || -1E9;
 
 # According to IO::Socket::SSL documentation, 16k is the maximum
 # size of an SSL frame and because sysread returns data from only
@@ -1037,6 +1038,9 @@ sub __try_read_sock {
       ## if we got ECONNRESET, it might be due a timeout from the other side (on freebsd)
       ## or because an intermediate proxy shut down our connection using its internal timeout counter
       return 0 if ($err && $err == ECONNRESET);
+
+      ## Broken pipe, we will need to reconnect
+      $self->__throw_reconnect('Broken pipe') if $err == EPIPE;
 
       ## result is undef but err is 0? should never happen
       return if $err == 0;

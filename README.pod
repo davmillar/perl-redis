@@ -1619,6 +1619,10 @@ Ivan Kruglov
 
 Steffen Mueller <smueller@cpan.org>
 
+=item *
+
+David Millar <dave@davegoesthedistance.com>
+
 =back
 
 =head1 AUTHORS
